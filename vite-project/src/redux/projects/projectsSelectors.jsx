@@ -1,11 +1,11 @@
 import { createSelector } from "@reduxjs/toolkit";
+import { projectsAdapter } from "./projectsSlice";
 
-export const selectProjectsState = (state) => state.projects;
-export const selectProjects = (state) => state.projects?.items || [];
-export const selectProjectsIsLoading = (state) => state.projects?.isLoading || false;
-export const selectProjectsError = (state) => state.projects?.error || null;
+export const {
+  selectAll: selectAllProjects,
+  selectById: selectProjectById,
+  selectIds: selectProjectIds,
+} = projectsAdapter.getSelectors((state) => state.projects);
 
-export const selectProjectById = createSelector(
-  [selectProjects, (_, projectId) => projectId],
-  (projects, projectId) => projects.find((project) => project.id === projectId) || null
-);
+export const selectProjectsStatus = (state) => state.projects.status;
+export const selectProjectsError = (state) => state.projects.error;

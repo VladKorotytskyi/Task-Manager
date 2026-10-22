@@ -1,38 +1,21 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { selectProjectById } from "../../redux/projects/projectsSelectors";
-import { selectTasksByUserId } from "../../redux/tasks/tasksSelector";
+import { selectTasksByUserId } from "../../redux/tasks/tasksSelectors";
+import * as S from "./UserCard.styled";
 
 export const UserCard = ({ user }) => {
-  const project = useSelector((state) =>
-    selectProjectById(state, user?.projectId)
-  );
-
-  const userTasks = useSelector((state) =>
-    selectTasksByUserId(state, user?.id)
-  );
-
-  if (!user) return null;
+  const userTasks = useSelector((state) => selectTasksByUserId(state, user.id));
 
   return (
-    <div className="user-card">
-      <h2>Name: {user.name}</h2>
-      <p>
-        <strong>Project:</strong>{" "}
-        {project ? project.title : "No project assigned"}
-      </p>
-      <p>
-        <strong>Status:</strong> {project ? project.status : "N/A"}
-      </p>
-      <p>
-        <strong>Priority:</strong> {project ? project.priority : "N/A"}
-      </p>
-
-      <div>
-        <button type="button">Edit</button>
-        <button type="button">Delete</button>
-        <button type="button">Details</button>
-      </div>
-    </div>
+    <S.Card>
+      {user.avatar && <S.Avatar src={user.avatar} alt={user.name} />}
+      <S.Info>
+        <S.Name>{user.name}</S.Name>
+        <S.Email>{user.email}</S.Email>
+        <div>
+          <strong>Assigned tasks:</strong> {userTasks.length}
+        </div>
+      </S.Info>
+    </S.Card>
   );
 };

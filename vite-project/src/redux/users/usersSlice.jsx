@@ -1,41 +1,37 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { fetchUsers, addUser as addUserThunk } from "./usersThunks";
+import { createSlice, createEntityAdapter } from "@reduxjs/toolkit";
+import { fetchUsers, addUser, deleteUser } from "./usersThunks";
+
+export const usersAdapter = createEntityAdapter();
 
 const usersSlice = createSlice({
   name: "users",
-  initialState: {
-    items: [],
-    isLoading: false,
+  initialState: usersAdapter.getInitialState({
+    status: "idle",
     error: null,
-  },
-  reducers: {
-    addUser: (state, action) => {
-      state.items.push(action.payload);
-    },
-    deleteUser: (state, action) => {
-      state.items = state.items.filter((user) => user.id !== action.payload);
-    },
-  },
+  }),
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchUsers.pending, (state) => {
-        state.isLoading = true;
+        state.status = "loading";
         state.error = null;
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.items = action.payload;
+        state.status = "succeeded";
+        usersAdapter.setAll(state, action.payload);
       })
       .addCase(fetchUsers.rejected, (state, action) => {
-        state.isLoading = false;
+        state.status = "failed";
         state.error = action.payload;
       })
-      .addCase(addUserThunk.fulfilled, (state, action) => {
-        state.items.push(action.payload);
+      .addCase(addUser.fulfilled, (state, action) => {
+        usersAdapter.addOne(state, action.payload);
+      })
+      .addCase(deleteUser.fulfilled, (state, action) => {
+        usersAdapter.removeOne(state, action.payload);
       });
   },
 });
 
-export const { addUser, deleteUser } = usersSlice.actions;
 export const usersReducer = usersSlice.reducer;
 export default usersSlice.reducer;

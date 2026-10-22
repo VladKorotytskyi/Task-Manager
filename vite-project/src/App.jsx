@@ -1,39 +1,75 @@
+import React, { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
-import { Layout } from "./Components/Layout/Layout";
+import { useDispatch, useSelector } from "react-redux";
+
+import { fetchProjects } from "./redux/projects/projectsThunks";
+import { fetchUsers } from "./redux/users/usersThunks";
+import { fetchTasks } from "./redux/tasks/tasksThunks";
+import { selectFilteredTasks } from "./redux/tasks/tasksSelectors";
+import { LayoutWrapper, MainContent, PageContent, TasksPageContainer, TasksPageTitle} from "./App.styled";
+
 import { Header } from "./Components/Header/Header";
-import { Sidebar } from "./Components/SideBar/Sidebar";
+import {SideBar} from "./Components/SideBar/SideBar";
 import { Dashboard } from "./Components/Dashboard/Dashboard";
 import { Projects } from "./Components/Projects/Projects";
 import { Users } from "./Components/Users/Users";
+import { TaskFilters } from "./Components/TaskFilters/TaskFilters";
 import { TaskForm } from "./Components/TaskForm/TaskForm";
-import { useState } from "react";
-import React from "react";
-import "./App.css";
+import { TaskCard } from "./Components/TaskCard/TaskCard";
 
-function App() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+const TasksPage = () => {
+  const [editingTask, setEditingTask] = useState(null);
+  const tasks = useSelector(selectFilteredTasks);
 
   return (
-    <div>
-      <Header isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      <Sidebar
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
+    <TasksPageContainer>
+      <TasksPageTitle>Tasks</TasksPageTitle>
+      
+      <TaskForm 
+        editTask={editingTask} 
+        onCancel={() => setEditingTask(null)} 
       />
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/users" element={<Users />} />
-          <Route path="/tasks" element={<TaskForm />} />
-        </Routes>
-      </Layout>
-    </div>
+
+      <TaskFilters />
+
+      {tasks.length > 0 ? (
+        tasks.map((task) => (
+          <TaskCard 
+            key={task.id} 
+            task={task} 
+            onEdit={(t) => setEditingTask(t)} 
+          />
+        ))
+      ) : (
+        <p>No tasks found.</p>
+      )}
+    </TasksPageContainer>
+  );
+};
+
+export default function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchProjects());
+    dispatch(fetchUsers());
+    dispatch(fetchTasks());
+  }, [dispatch]);
+
+  return (
+    <LayoutWrapper>
+      <Header />
+      <MainContent>
+        <SideBar />
+        <PageContent>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/tasks" element={<TasksPage />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/users" element={<Users />} />
+          </Routes>
+        </PageContent>
+      </MainContent>
+    </LayoutWrapper>
   );
 }
-
-export default App;

@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
+import * as S from "./Header.styled";
 
-export const Header = ({ isSidebarOpen, toggleSidebar }) => {
-    return (
-        <header className="header">
-            <h1>Task Manager</h1>
-            <button onClick={toggleSidebar}>
-                {isSidebarOpen ? "Close Sidebar" : "Open Sidebar"}
-            </button>
-        </header>
-    );
+export const Header = () => {
+  return (
+    <S.HeaderContainer>
+      <S.Title>Task Manager</S.Title>
+      <S.UserBadge>
+        <span>Workspace: Active</span>
+      </S.UserBadge>
+    </S.HeaderContainer>
+  );
 };

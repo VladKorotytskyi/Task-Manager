@@ -1,24 +1,21 @@
-import { Routes, Route, Link } from "react-router-dom";
+import React from "react";
+import * as S from "./SideBar.styled";
 
-export const Sidebar = ({ isOpen}) => {
-  if (!isOpen) return null;
-
+export const SideBar = () => {
   return (
-    <nav>
-      <ul>
-        <li>
-          <Link to="/">Dashboard</Link>
-        </li>
-        <li>
-          <Link to="/projects">Projects</Link>
-        </li>
-        <li>
-          <Link to="/users">Users</Link>
-        </li>
-        <li>
-          <Link to="/tasks">Tasks</Link>
-        </li>
-      </ul>
-    </nav>
+    <S.SidebarContainer>
+      <S.StyledNavLink to="/" end>
+        Dashboard
+      </S.StyledNavLink>
+      <S.StyledNavLink to="/tasks">
+        Tasks
+      </S.StyledNavLink>
+      <S.StyledNavLink to="/projects">
+        Projects
+      </S.StyledNavLink>
+      <S.StyledNavLink to="/users">
+        Users
+      </S.StyledNavLink>
+    </S.SidebarContainer>
   );
 };
